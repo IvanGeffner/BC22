@@ -21,6 +21,7 @@ public abstract class Robot {
     static Explore explore;
     static Communication comm;
     int creationRound;
+    boolean reportLeadAtBeginning;
 
 
     public Robot(RobotController rc){
@@ -41,6 +42,7 @@ public abstract class Robot {
 
 
         creationRound = rc.getRoundNum();
+        reportLeadAtBeginning = rc.getType() == RobotType.ARCHON || rc.getType() == RobotType.MINER;
         switch(rc.getType()){
         }
     }
@@ -49,15 +51,16 @@ public abstract class Robot {
 
     void initTurn(){
         comm.reportSelf();
+        if (reportLeadAtBeginning) explore.reportLead();
     }
 
     void endTurn(){
-        explore.reportLead();
+        if (!reportLeadAtBeginning) explore.reportLead();
         explore.reportUnits();
     }
 
     boolean constructRobotGreedy(RobotType t){
-        System.out.println("Trying to make " + t.name());
+        //System.out.println("Trying to make " + t.name());
         try {
             MapLocation myLoc = rc.getLocation();
             Direction bestDir = null;

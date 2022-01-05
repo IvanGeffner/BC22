@@ -12,7 +12,7 @@ public class Explore {
     int distLead = 0;
 
 
-    static final int BYTECODE_EXPLORE_LEAD = 1500;
+    static final int BYTECODE_EXPLORE_LEAD = 4000;
 
     Explore(RobotController rc){
         this.rc = rc;
@@ -30,16 +30,15 @@ public class Explore {
             MapLocation myLoc = rc.getLocation();
             while (i-- > 0){
                 if (Clock.getBytecodeNum() > BYTECODE_EXPLORE_LEAD) break;
-                MapLocation m = mapLocs[i];
-                if (!rc.onTheMap(m)) continue;
-                int lead = rc.senseLead(m);
+                //if (!rc.onTheMap(m)) continue;
+                int lead = rc.senseLead(mapLocs[i]);
                 if (lead > 0){
                     visibleLead = true;
-                    Robot.comm.reportLead(m, lead);
+                    //Robot.comm.reportLead(m, lead);
                     if (compareLead && lead > Constants.MIN_LEAD_RELEVANT){
-                        int d = m.distanceSquaredTo(myLoc);
+                        int d = mapLocs[i].distanceSquaredTo(myLoc);
                         if (closestLead == null || d < distLead){
-                            closestLead = m;
+                            closestLead = mapLocs[i];
                             distLead = d;
                         }
                     }

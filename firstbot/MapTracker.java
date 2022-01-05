@@ -19,13 +19,13 @@ public class MapTracker {
     }
 
     void add(MapLocation loc){
-        int arrayPos = (loc.x%MAX_MAP_SIZE)*(1 + (loc.y%MAX_MAP_SIZE)/INT_BITS);
+        int arrayPos = loc.x + MAX_MAP_SIZE*(loc.y/INT_BITS);
         int bitPos = loc.y%INT_BITS;
         visitedLocations[arrayPos] |= (1 << bitPos);
     }
 
     boolean check(MapLocation loc){
-        int arrayPos = (loc.x%MAX_MAP_SIZE)*(1 + (loc.y%MAX_MAP_SIZE)/INT_BITS);
+        int arrayPos = loc.x + MAX_MAP_SIZE*(loc.y/INT_BITS);
         int bitPos = loc.y%INT_BITS;
         return ((visitedLocations[arrayPos] & (1 << bitPos)) > 0);
     }

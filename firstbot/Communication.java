@@ -28,7 +28,7 @@ public class Communication {
     static int myArchonIndex = -1;
     static boolean archon = false;
 
-    static final int INF_COMM = (1 << 15) - 1;
+    static final int INF_COMM = (1 << 16) - 1;
 
     RobotController rc;
 
@@ -70,7 +70,7 @@ public class Communication {
     void reportLead(MapLocation loc, int lead){
         try {
             int endQueue = rc.readSharedArray(LEAD_INDEX + 2*LEAD_QUEUE_SIZE);
-            rc.writeSharedArray(LEAD_INDEX + 2*LEAD_QUEUE_SIZE, (endQueue+1));
+            rc.writeSharedArray(LEAD_INDEX + 2*LEAD_QUEUE_SIZE, (endQueue+1)%INF_COMM);
             rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE), Target.getCode(loc, Target.LEAD_TYPE));
             rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, Math.min(INF_COMM, lead));
         } catch (Exception e){
@@ -81,7 +81,7 @@ public class Communication {
     void reportSoldier(MapLocation loc, int id){
         try {
             int endQueue = rc.readSharedArray(ENEMY_SOLDIER_INDEX + ENEMY_SOLDIER_SIZE);
-            rc.writeSharedArray(ENEMY_SOLDIER_INDEX + ENEMY_SOLDIER_SIZE, (endQueue+1));
+            rc.writeSharedArray(ENEMY_SOLDIER_INDEX + ENEMY_SOLDIER_SIZE, (endQueue+1)%INF_COMM);
             rc.writeSharedArray(ENEMY_SOLDIER_INDEX + (endQueue%ENEMY_SOLDIER_SIZE), Target.getCode(loc, Target.SOLDIER_TYPE));
             rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, id);
         } catch (Exception e){
@@ -92,7 +92,7 @@ public class Communication {
     void reportGold(MapLocation loc, int gold){
         try {
             int endQueue = rc.readSharedArray(GOLD_INDEX + GOLD_SIZE);
-            rc.writeSharedArray(GOLD_INDEX + GOLD_SIZE, (endQueue+1));
+            rc.writeSharedArray(GOLD_INDEX + GOLD_SIZE, (endQueue+1)%INF_COMM);
             rc.writeSharedArray(GOLD_INDEX + (endQueue%GOLD_SIZE), Target.getCode(loc, Target.GOLD_TYPE));
             rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, Math.min(INF_COMM, gold));
         } catch (Exception e){
@@ -103,7 +103,7 @@ public class Communication {
     void reportArchon(MapLocation loc, int id){
         try {
             int endQueue = rc.readSharedArray(ENEMY_ARCHON_INDEX + ENEMY_ARCHON_SIZE);
-            rc.writeSharedArray(ENEMY_ARCHON_INDEX + ENEMY_ARCHON_SIZE, (endQueue+1));
+            rc.writeSharedArray(ENEMY_ARCHON_INDEX + ENEMY_ARCHON_SIZE, (endQueue+1)%INF_COMM);
             rc.writeSharedArray(ENEMY_ARCHON_INDEX + (endQueue%ENEMY_ARCHON_SIZE), Target.getCode(loc, Target.ARCHON_TYPE));
             rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, id);
         } catch (Exception e){

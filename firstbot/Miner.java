@@ -17,13 +17,19 @@ public class Miner extends Robot {
 
     void moveToTarget(){
         if (!rc.isMovementReady()) return;
+        rc.setIndicatorString("Trying to move");
         MapLocation loc = getTarget();
+        if (loc != null) rc.setIndicatorString("Target not null!: " + loc.toString());
         bfs.move(loc);
     }
 
     MapLocation getTarget(){
         MapLocation loc = getClosestLead();
         if (loc == null) return explore.getExploreTarget();
+        if (loc != null){
+            //rc.setIndicatorString("Going to " + loc.toString());
+           // rc.setIndicatorDot(loc, 100, 100, 100);
+        }
         return loc;
     }
 
@@ -39,6 +45,7 @@ public class Miner extends Robot {
         try {
             for (Direction d : directions) {
                 MapLocation newLoc = rc.getLocation().add(d);
+                if (!rc.onTheMap(newLoc)) continue;
                 if (rc.canMineGold(newLoc)){
                     rc.mineGold(newLoc);
                     return;
@@ -47,6 +54,7 @@ public class Miner extends Robot {
 
             for (Direction d : directions) {
                 MapLocation newLoc = rc.getLocation().add(d);
+                if (!rc.onTheMap(newLoc)) continue;
                 if (rc.senseLead(newLoc) <= 1) continue;
                 if (rc.canMineLead(newLoc)){
                     rc.mineLead(newLoc);

@@ -36,7 +36,7 @@ public class Pathfinding {
 
     boolean canMove(Direction dir){
         if (!rc.canMove(dir)) return false;
-        if (impassable[dir.ordinal()]) return false;
+        //if (impassable[dir.ordinal()]) return false; TODO
         return true;
     }
 
