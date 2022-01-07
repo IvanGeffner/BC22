@@ -25,9 +25,6 @@ public class Micro {
         myRange = rc.getType().actionRadiusSquared;
         myVisionRange = rc.getType().visionRadiusSquared;
         myDPS = DPS[rc.getType().ordinal()];
-        if (rc.getType() != RobotType.SOLDIER && rc.getType() != RobotType.SAGE) {
-            alwaysInRange = true;
-        }
     }
 
     static double currentDPS = 0;
@@ -54,6 +51,8 @@ public class Micro {
             }
             if (!shouldPlaySafe) return false;
 
+            alwaysInRange = false;
+            if (!attacker || !rc.isActionReady()) alwaysInRange = true;
 
             MicroInfo[] microInfo = new MicroInfo[9];
             for (int i = 0; i < 9; ++i) microInfo[i] = new MicroInfo(dirs[i]);
@@ -119,12 +118,18 @@ public class Micro {
         double enemiesTargeting = 0;
         double alliesTargeting = 0;
         boolean canMove = true;
+        int rubble = 0;
 
         public MicroInfo(Direction dir){
             this.dir = dir;
             this.location = rc.getLocation().add(dir);
             if (!rc.canMove(dir)) canMove = false;
             else{
+                try {
+                    rubble = rc.senseRubble(this.location);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
                 if (!hurt){
                     try{
                         if (canAttack){
@@ -142,10 +147,7 @@ public class Micro {
         void updateEnemy(RobotInfo unit){
             if (!canMove) return;
             int dist = unit.getLocation().distanceSquaredTo(location);
-            if (dist < minDistanceToEnemy){
-                minDistanceToEnemy = dist;
-                //if (currentDPS > 0) shouldPlaySafe = true; //TODO: maybe remove the 'if'
-            }
+            if (dist < minDistanceToEnemy)  minDistanceToEnemy = dist;
             if (dist <= currentActionRadius) DPSreceived += currentDPS;
             if (dist <= currentRangeExtended) enemiesTargeting += currentDPS;
         }
@@ -178,11 +180,15 @@ public class Micro {
             if (inRange() && !M.inRange()) return true;
             if (!inRange() && M.inRange()) return false;
 
+            if (rubble < M.rubble) return true;
+            if (M.rubble < rubble) return false;
+
             if (alliesTargeting > M.alliesTargeting) return true;
             if (alliesTargeting < M.alliesTargeting) return false;
 
             if (inRange()) return minDistanceToEnemy >= M.minDistanceToEnemy;
             else return minDistanceToEnemy <= M.minDistanceToEnemy;
+
 
             //TODO: this doesn't take into account rubble besides yes/no for advancing
 

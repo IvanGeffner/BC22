@@ -11,7 +11,7 @@ public class Archon extends Robot {
 
     boolean mainArchon = false;
 
-    int minerScore = 0;
+    int minerScore = -2;
     int soldierScore = 0;
 
     void play(){
@@ -33,8 +33,8 @@ public class Archon extends Robot {
     }
 
     void updateMinerScore(){
-        if (rc.getRoundNum() < 100) minerScore += 1;
-        else if (rc.getRoundNum() < 300) minerScore += 2;
+        if (minerScore < 8) minerScore += 1;
+        else if (minerScore < 30) minerScore += 2;
         else minerScore += 5;
     }
 

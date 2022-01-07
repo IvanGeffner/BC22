@@ -7,6 +7,7 @@ public class Miner extends Robot {
 
     int actionRadius;
     boolean shouldMove = true;
+    int profitTurns = 0;
 
     Miner(RobotController rc){
         super(rc);
@@ -16,7 +17,6 @@ public class Miner extends Robot {
     void play(){
         tryMine();
         moveToTarget();
-        //TODO: also move in danger
         tryMine();
     }
 

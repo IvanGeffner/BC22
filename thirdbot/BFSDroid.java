@@ -566,14 +566,14 @@ public class BFSDroid extends BFS {
             d114 = null;
 
             if (rc.onTheMap(l71)) {
-                if (!rc.isLocationOccupied(l71)) {
+                if (rc.canMove(Direction.WEST)) {
                     p71 = 10 + rc.senseRubble(l71);
                     v71 = v84 + p71;
                     d71 = Direction.WEST;
                 }
             }
             if (rc.onTheMap(l83)) {
-                if (!rc.isLocationOccupied(l83)) {
+                if (rc.canMove(Direction.SOUTH)) {
                     p83 = 10 + rc.senseRubble(l83);
                     if (v84 > v71) {
                         v83 = v71 + p83;
@@ -585,7 +585,7 @@ public class BFSDroid extends BFS {
                 }
             }
             if (rc.onTheMap(l85)) {
-                if (!rc.isLocationOccupied(l85)) {
+                if (rc.canMove(Direction.NORTH)) {
                     p85 = 10 + rc.senseRubble(l85);
                     if (v84 > v71) {
                         v85 = v71 + p85;
@@ -597,7 +597,7 @@ public class BFSDroid extends BFS {
                 }
             }
             if (rc.onTheMap(l97)) {
-                if (!rc.isLocationOccupied(l97)) {
+                if (rc.canMove(Direction.EAST)) {
                     p97 = 10 + rc.senseRubble(l97);
                     if (v84 > v85) {
                         if (v85 > v83) {
@@ -619,7 +619,7 @@ public class BFSDroid extends BFS {
                 }
             }
             if (rc.onTheMap(l70)) {
-                if (!rc.isLocationOccupied(l70)) {
+                if (rc.canMove(Direction.SOUTHWEST)) {
                     p70 = 10 + rc.senseRubble(l70);
                     if (v84 > v71) {
                         if (v71 > v83) {
@@ -641,7 +641,7 @@ public class BFSDroid extends BFS {
                 }
             }
             if (rc.onTheMap(l72)) {
-                if (!rc.isLocationOccupied(l72)) {
+                if (rc.canMove(Direction.NORTHWEST)) {
                     p72 = 10 + rc.senseRubble(l72);
                     if (v84 > v71) {
                         if (v71 > v85) {
@@ -663,7 +663,7 @@ public class BFSDroid extends BFS {
                 }
             }
             if (rc.onTheMap(l96)) {
-                if (!rc.isLocationOccupied(l96)) {
+                if (rc.canMove(Direction.SOUTHEAST)) {
                     p96 = 10 + rc.senseRubble(l96);
                     if (v84 > v97) {
                         if (v97 > v83) {
@@ -685,7 +685,7 @@ public class BFSDroid extends BFS {
                 }
             }
             if (rc.onTheMap(l98)) {
-                if (!rc.isLocationOccupied(l98)) {
+                if (rc.canMove(Direction.NORTHEAST)) {
                     p98 = 10 + rc.senseRubble(l98);
                     if (v84 > v85) {
                         if (v85 > v97) {
