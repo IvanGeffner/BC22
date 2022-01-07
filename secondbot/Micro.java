@@ -77,21 +77,22 @@ public class Micro {
             }
 
             //TODO: take into account allies?
-        if (myDPS > 0) {
-            units = rc.senseNearbyRobots(myVisionRange, rc.getTeam());
-            for (RobotInfo unit : units) {
-                if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
-                microInfo[0].updateAlly(unit);
-                microInfo[1].updateAlly(unit);
-                microInfo[2].updateAlly(unit);
-                microInfo[3].updateAlly(unit);
-                microInfo[4].updateAlly(unit);
-                microInfo[5].updateAlly(unit);
-                microInfo[6].updateAlly(unit);
-                microInfo[7].updateAlly(unit);
-                microInfo[8].updateAlly(unit);
+            if (myDPS > 0) {
+                units = rc.senseNearbyRobots(myVisionRange, rc.getTeam());
+                for (RobotInfo unit : units) {
+                    if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
+                    currentDPS = DPS[unit.getType().ordinal()] / (10 + rc.senseRubble(unit.getLocation()));
+                    microInfo[0].updateAlly(unit);
+                    microInfo[1].updateAlly(unit);
+                    microInfo[2].updateAlly(unit);
+                    microInfo[3].updateAlly(unit);
+                    microInfo[4].updateAlly(unit);
+                    microInfo[5].updateAlly(unit);
+                    microInfo[6].updateAlly(unit);
+                    microInfo[7].updateAlly(unit);
+                    microInfo[8].updateAlly(unit);
+                }
             }
-        }
 
             MicroInfo bestMicro = microInfo[8];
             for (int i = 0; i < 8; ++i) {
@@ -151,7 +152,7 @@ public class Micro {
 
         void updateAlly(RobotInfo unit){
             if (!canMove) return;
-            if (unit.getLocation().distanceSquaredTo(location) <= 8) alliesTargeting += DPS[unit.getType().ordinal()];
+            alliesTargeting += currentDPS;
         }
 
         int safe(){

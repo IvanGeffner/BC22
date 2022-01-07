@@ -81,6 +81,7 @@ public class Micro {
             units = rc.senseNearbyRobots(myVisionRange, rc.getTeam());
             for (RobotInfo unit : units) {
                 if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
+                currentDPS = DPS[unit.getType().ordinal()] / (10 + rc.senseRubble(unit.getLocation()));
                 microInfo[0].updateAlly(unit);
                 microInfo[1].updateAlly(unit);
                 microInfo[2].updateAlly(unit);
@@ -151,7 +152,7 @@ public class Micro {
 
         void updateAlly(RobotInfo unit){
             if (!canMove) return;
-            if (unit.getLocation().distanceSquaredTo(location) <= 8) alliesTargeting += DPS[unit.getType().ordinal()];
+            alliesTargeting += currentDPS;
         }
 
         int safe(){
