@@ -1,6 +1,6 @@
-package firstbot;
+package thirdbot;
 
-import battlecode.common.*;
+import battlecode.common.MapLocation;
 
 public class Util {
 
@@ -11,4 +11,5 @@ public class Util {
         return (loc.x << 6) | loc.y;
     }
     static MapLocation getLocation(int code) { return new MapLocation(code >>> 6, code&63); }
+
 }

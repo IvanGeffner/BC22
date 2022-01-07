@@ -1,6 +1,9 @@
-package firstbot;
+package thirdbot;
 
-import battlecode.common.*;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotController;
+import battlecode.common.RobotInfo;
+import battlecode.common.RobotType;
 
 public class Communication {
 

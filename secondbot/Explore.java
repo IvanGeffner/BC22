@@ -1,4 +1,4 @@
-package firstbot;
+package secondbot;
 
 import battlecode.common.*;
 
@@ -47,9 +47,7 @@ public class Explore {
             MapLocation myLoc = rc.getLocation();
             while (i-- > 0){
                 if (Clock.getBytecodeNum() > BYTECODE_EXPLORE_LEAD) break;
-                //if (!rc.onTheMap(m)) continue;
                 int lead = rc.senseLead(mapLocs[i]);
-                    //visibleLead = true;
                     //Robot.comm.reportLead(m, lead); TODO comms?
                 if (compareLead && lead > Constants.MIN_LEAD_RELEVANT){
                     int d = mapLocs[i].distanceSquaredTo(myLoc);

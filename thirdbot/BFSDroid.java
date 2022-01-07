@@ -1,6 +1,8 @@
-package firstbot;
+package thirdbot;
 
-import battlecode.common.*;
+import battlecode.common.Direction;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotController;
 
 public class BFSDroid extends BFS {
 

@@ -1,6 +1,7 @@
-package firstbot;
+package thirdbot;
 
-import battlecode.common.*;
+import battlecode.common.RobotController;
+import battlecode.common.RobotType;
 
 public class Archon extends Robot {
 
