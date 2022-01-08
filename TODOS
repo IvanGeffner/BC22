@@ -1,6 +1,9 @@
-- Micro
+- Global Building Queue
+
+- Adapt Building Queue
+- Improve exploration
+- Suicide miners
 
 For the future:
 - Recall turrets
-- Suicide miners
 - Miners should mine at least effort

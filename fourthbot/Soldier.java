@@ -1,4 +1,4 @@
-package thirdbot;
+package fourthbot;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;

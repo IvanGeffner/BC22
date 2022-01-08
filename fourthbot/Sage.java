@@ -1,13 +1,13 @@
-package thirdbot;
+package fourthbot;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 
-public class Soldier extends Robot {
+public class Sage extends Robot {
 
-    Soldier(RobotController rc){
+    Sage(RobotController rc){
         super(rc);
     }
 

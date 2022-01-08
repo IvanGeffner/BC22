@@ -1,4 +1,4 @@
-package thirdbot;
+package fourthbot;
 
 import battlecode.common.Direction;
 import battlecode.common.MapLocation;

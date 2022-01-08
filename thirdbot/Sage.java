@@ -103,25 +103,25 @@ public class Sage extends Robot {
             this.mloc = r.getLocation();
             switch (r.getType()){
                 case ARCHON:
-                    priority = 7;
+                    priority = 0;
                     break;
                 case SOLDIER:
-                    priority = 6;
-                    break;
-                case MINER:
                     priority = 5;
                     break;
-                case SAGE:
+                case MINER:
                     priority = 4;
+                    break;
+                case SAGE:
+                    priority = 6;
                     break;
                 case LABORATORY:
                     priority = 3;
                     break;
                 case BUILDER:
-                    priority = 2;
+                    priority = 1;
                     break;
                 case WATCHTOWER:
-                    priority = 1;
+                    priority = 2;
                     break;
             }
         }
