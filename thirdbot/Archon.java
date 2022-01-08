@@ -5,6 +5,8 @@ import battlecode.common.RobotType;
 
 public class Archon extends Robot {
 
+    static final int BUILDER_LEAD = 1000;
+
     Archon(RobotController rc) {
         super(rc);
     }
@@ -13,11 +15,19 @@ public class Archon extends Robot {
 
     int minerScore = -2;
     int soldierScore = 0;
+    int builderScore = 0;
 
     void play(){
         if (explore.visibleLead) mainArchon = true;
         if (mainArchon){
             while (true) {
+                if (constructRobotGreedy(RobotType.SAGE)) continue;
+                if (shouldBuildBuilder() && builderScore < minerScore && builderScore < soldierScore){
+                    if (constructRobotGreedy(RobotType.BUILDER)){
+                        updateMinerScore();
+                        continue;
+                    }
+                }
                 if (minerScore <= soldierScore) {
                     if (constructRobotGreedy(RobotType.MINER)){
                         updateMinerScore();
@@ -40,6 +50,14 @@ public class Archon extends Robot {
 
     void updateSoldierScore(){
         soldierScore += 2;
+    }
+
+    void updateBuilderScore() {
+        builderScore += 100;
+    }
+
+    boolean shouldBuildBuilder(){
+        return rc.getTeamLeadAmount(rc.getTeam()) > BUILDER_LEAD;
     }
 
 }
