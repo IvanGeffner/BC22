@@ -1,9 +1,7 @@
-- Global Building Queue
-
-- Adapt Building Queue
+- Miners should mine at least effort (Incentivize Spread)
 - Improve exploration
 - Suicide miners
 
 For the future:
 - Recall turrets
-- Miners should mine at least effort
+- Adapt Building Queue
