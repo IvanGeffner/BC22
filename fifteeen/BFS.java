@@ -1,9 +1,6 @@
 package fifteeen;
 
-import battlecode.common.Clock;
-import battlecode.common.Direction;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
+import battlecode.common.*;
 
 public abstract class BFS {
 
@@ -64,7 +61,7 @@ public abstract class BFS {
 
         //System.out.println("Before micro " + Clock.getBytecodeNum());
 
-        if (micro.doMicro()){
+        if (rc.getType() != RobotType.ARCHON && micro.doMicro()){
             rc.setIndicatorString("Did micro");
             reset();
             return;

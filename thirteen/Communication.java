@@ -12,25 +12,6 @@ public class Communication {
     static final int ARCHON_INDEX = 0;
     static final int ARCHON_NB_INDEX = 14;
 
-    //LEAD
-    static final int LEAD_INDEX = 15;
-    static final int LEAD_QUEUE_SIZE = 9;
-
-    //ARCHONS
-    static final int ENEMY_ARCHON_INDEX = 50;
-    static final int ENEMY_ARCHON_SIZE = 4;
-
-    //SOLDIERS
-    static final int ENEMY_SOLDIER_INDEX = 35;
-    static final int ENEMY_SOLDIER_SIZE = 7;
-
-    //WATCHTOWER QUEUE
-    static final int WATCHTOWER_QUEUE_INDEX = 40;
-    static final int WATCHTOWER_QUEUE_SIZE = 7;
-
-    //DANGER
-    static final int DANGER_INDEX = 48;
-
     //RESERVE QUEUE
     static final int RESERVE_LEAD_INDEX = 49;
     final int RESERVE_LEAD_SIZE = 5;
@@ -84,46 +65,13 @@ public class Communication {
     }
 
     //only archons
-    void reportSelf(){
+    void reportSelf() {
         if (!archon) return;
         try {
             int locCode = Util.encodeLoc(rc.getLocation());
-            rc.writeSharedArray(3*myArchonIndex+1, locCode);
-            rc.writeSharedArray(3*myArchonIndex+2, rc.getRoundNum());
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    void reportLead(MapLocation loc, int lead){
-        try {
-            int endQueue = rc.readSharedArray(LEAD_INDEX + 2*LEAD_QUEUE_SIZE);
-            rc.writeSharedArray(LEAD_INDEX + 2*LEAD_QUEUE_SIZE, (endQueue+1)%INF_COMM);
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE), Target.getCode(loc, Target.LEAD_TYPE));
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, Math.min(INF_COMM, lead));
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    void reportSoldier(MapLocation loc, int id){
-        try {
-            int endQueue = rc.readSharedArray(ENEMY_SOLDIER_INDEX + ENEMY_SOLDIER_SIZE);
-            rc.writeSharedArray(ENEMY_SOLDIER_INDEX + ENEMY_SOLDIER_SIZE, (endQueue+1)%INF_COMM);
-            rc.writeSharedArray(ENEMY_SOLDIER_INDEX + (endQueue%ENEMY_SOLDIER_SIZE), Target.getCode(loc, Target.SOLDIER_TYPE));
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, id);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    void reportArchon(MapLocation loc, int id){
-        try {
-            int endQueue = rc.readSharedArray(ENEMY_ARCHON_INDEX + ENEMY_ARCHON_SIZE);
-            rc.writeSharedArray(ENEMY_ARCHON_INDEX + ENEMY_ARCHON_SIZE, (endQueue+1)%INF_COMM);
-            rc.writeSharedArray(ENEMY_ARCHON_INDEX + (endQueue%ENEMY_ARCHON_SIZE), Target.getCode(loc, Target.ARCHON_TYPE));
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, id);
-        } catch (Exception e){
+            rc.writeSharedArray(3 * myArchonIndex + 1, locCode);
+            rc.writeSharedArray(3 * myArchonIndex + 2, rc.getRoundNum());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

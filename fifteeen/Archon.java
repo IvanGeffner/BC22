@@ -1,15 +1,13 @@
 package fifteeen;
 
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
-import battlecode.common.RobotInfo;
-import battlecode.common.RobotType;
+import battlecode.common.*;
 
 public class Archon extends Robot {
 
     int builderScore;
     int minerScore;
     int soldierScore;
+    int lastBuildTurn = 0;
 
     MapLocation closestEnemy = null;
 
@@ -23,11 +21,39 @@ public class Archon extends Robot {
 
     void play(){
         computeClosestEnemy();
+        checkReserves();
         buildUnit();
         tryRepair();
+        tryMove();
+    }
+
+    void checkReserves(){
+        if (rc.getMode() == RobotMode.TURRET) return;
+        Reservation r = comm.getReservedRobot();
+        if (r.t == null) return;
+        if (r.first) comm.cancelFirstReservation();
+
+    }
+
+    void tryMove(){
+        try {
+            if (rc.getRoundNum() <= Constants.ARCHON_FIX_INITIAL_TURNS) return;
+            if (rc.getRoundNum() - lastBuildTurn <= Constants.MIN_TURNS_NO_BUILD) return;
+            MapLocation targetLoc = getBestLocArchon();
+            if (targetLoc == null) return;
+            if (rc.getLocation().distanceSquaredTo(targetLoc) <= 0) {
+                if (rc.getMode() != RobotMode.TURRET && rc.canTransform()) rc.transform();
+                return;
+            }
+            if (rc.getMode() != RobotMode.PORTABLE && rc.canTransform()) rc.transform();
+            if (rc.getMode() == RobotMode.PORTABLE) bfs.move(targetLoc);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     void buildUnit(){
+        if (rc.getMode() != RobotMode.TURRET) return;
         remainingLead = 0;
 
         //try build sage
@@ -55,7 +81,7 @@ public class Archon extends Robot {
             comm.reserveRobot(RobotType.SOLDIER);
             return true;
         }
-        if (constructRobotGreedy(RobotType.SOLDIER, comm.getClosestEnemyArchon())){
+        if (tryConstructEnvelope(RobotType.SOLDIER, comm.getClosestEnemyArchon())){
             comm.reportBuilt(RobotType.SOLDIER, updateSoldierScore(soldierScore));
             return true;
         }
@@ -75,7 +101,7 @@ public class Archon extends Robot {
             comm.reportBuilt(RobotType.MINER, updateMinerScore(minerScore) + Util.getMinMiners());
             comm.reserveRobot(RobotType.MINER);
             return true;
-        } else if (constructRobotGreedy(RobotType.MINER, explore.closestLead)) {
+        } else if (tryConstructEnvelope(RobotType.MINER, explore.closestLead)) {
             comm.reportBuilt(RobotType.MINER, updateMinerScore(minerScore) + Util.getMinMiners());
             return true;
         }
@@ -86,7 +112,7 @@ public class Archon extends Robot {
         if (!shouldBuildBuilder()) return false;
         if (builderScore >= minerScore) return false;
         if (builderScore >= soldierScore) return false;
-        if (constructRobotGreedy(RobotType.BUILDER)) {
+        if (tryConstructEnvelope(RobotType.BUILDER, null)) {
             comm.reportBuilt(RobotType.BUILDER, updateBuilderScore(builderScore));
             return true;
         }
@@ -94,7 +120,7 @@ public class Archon extends Robot {
     }
 
     boolean tryConstructSage(){
-        if (constructRobotGreedy(RobotType.SAGE, comm.getClosestEnemyArchon())) return true;
+        if (tryConstructEnvelope(RobotType.SAGE, comm.getClosestEnemyArchon())) return true;
         return false;
     }
 
@@ -112,7 +138,7 @@ public class Archon extends Robot {
             MapLocation target = null;
             if (r.t == RobotType.MINER) target = explore.closestLead;
             else if (r.t == RobotType.SOLDIER) target = getBestLocSolider();
-            if (constructRobotGreedy(r.t, target)) comm.cancelFirstReservation();
+            if (tryConstructEnvelope(r.t, target)) comm.cancelFirstReservation();
             return true;
         }
 
@@ -211,6 +237,53 @@ public class Archon extends Robot {
 
     MapLocation getBestLocSolider(){
         return comm.getClosestEnemyArchon();
+    }
+
+    boolean tryConstructEnvelope(RobotType t, MapLocation target){
+        if (constructRobotGreedy(t, target)){
+            lastBuildTurn = rc.getRoundNum();
+            return true;
+        }
+        return false;
+    }
+
+    MapLocation getBestLocArchon(){
+        MapLocation center = comm.getCentralArchon();
+        if (center == null) return null;
+        rc.setIndicatorLine(rc.getLocation(), center, 255, 0, 0);
+        if (rc.getLocation().distanceSquaredTo(center) <= 0) return center;
+        try {
+            MapLocation[] mLocs = rc.getAllLocationsWithinRadiusSquared(center, 8);
+            if (!rc.canSenseLocation(center)) return center;
+            //if (mLocs.length == 0) return center;
+            MapLocation ans = null;
+            int bestRubble = 0;
+            int bestDist = 0;
+            for (MapLocation loc : mLocs) {
+                if (!rc.canSenseLocation(loc)) continue;
+                if (rc.isLocationOccupied(loc) && rc.getLocation().distanceSquaredTo(loc) > 0) continue;
+                int r = rc.senseRubble(loc);
+                int d = loc.distanceSquaredTo(center);
+                if (ans == null || isBetter(r,d,bestRubble,bestDist)){
+                    ans = loc;
+                    bestRubble = r;
+                    bestDist = d;
+                }
+            }
+            return ans;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return center;
+    }
+
+    boolean isBetter(int rubble, int distance, int oldRubble, int oldDistance){
+        if (rubble < oldRubble) return true;
+        if (oldRubble < rubble) return false;
+        //TODO check this
+        //if (distance <= 2 && oldDistance > 2) return false;
+        //if (oldDistance <= 2 && distance > 2) return true;
+        return distance < oldDistance;
     }
 
 }

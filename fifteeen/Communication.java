@@ -12,30 +12,14 @@ public class Communication {
     static final int ARCHON_INDEX = 0;
     static final int ARCHON_NB_INDEX = 14;
 
-    //LEAD
-    static final int LEAD_INDEX = 15;
-    static final int LEAD_QUEUE_SIZE = 9;
-
-    //ARCHONS
-    static final int ENEMY_ARCHON_INDEX = 50;
-    static final int ENEMY_ARCHON_SIZE = 4;
-
-    //SOLDIERS
-    static final int ENEMY_SOLDIER_INDEX = 35;
-    static final int ENEMY_SOLDIER_SIZE = 7;
-
-    //WATCHTOWER QUEUE
-    static final int WATCHTOWER_QUEUE_INDEX = 40;
-    static final int WATCHTOWER_QUEUE_SIZE = 7;
-
-    //DANGER
-    static final int DANGER_INDEX = 48;
-
     //RESERVE QUEUE
     static final int RESERVE_LEAD_INDEX = 49;
     final int RESERVE_LEAD_SIZE = 5;
     static final int RESERVE_LEAD_FINAL_ELEMENT = 54;
     static final int RESERVE_LEAD_FIRST_ELEMENT = 48;
+
+    //CENTRAL ARCHON
+    static final int CENTRAL_ARCHON_INDEX = 47;
 
     //BUILDING QUEUE
     static final int BUILDING_QUEUE_INDEX = 54;
@@ -90,39 +74,6 @@ public class Communication {
             int locCode = Util.encodeLoc(rc.getLocation());
             rc.writeSharedArray(3*myArchonIndex+1, locCode);
             rc.writeSharedArray(3*myArchonIndex+2, rc.getRoundNum());
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    void reportLead(MapLocation loc, int lead){
-        try {
-            int endQueue = rc.readSharedArray(LEAD_INDEX + 2*LEAD_QUEUE_SIZE);
-            rc.writeSharedArray(LEAD_INDEX + 2*LEAD_QUEUE_SIZE, (endQueue+1)%INF_COMM);
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE), Target.getCode(loc, Target.LEAD_TYPE));
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, Math.min(INF_COMM, lead));
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    void reportSoldier(MapLocation loc, int id){
-        try {
-            int endQueue = rc.readSharedArray(ENEMY_SOLDIER_INDEX + ENEMY_SOLDIER_SIZE);
-            rc.writeSharedArray(ENEMY_SOLDIER_INDEX + ENEMY_SOLDIER_SIZE, (endQueue+1)%INF_COMM);
-            rc.writeSharedArray(ENEMY_SOLDIER_INDEX + (endQueue%ENEMY_SOLDIER_SIZE), Target.getCode(loc, Target.SOLDIER_TYPE));
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, id);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    void reportArchon(MapLocation loc, int id){
-        try {
-            int endQueue = rc.readSharedArray(ENEMY_ARCHON_INDEX + ENEMY_ARCHON_SIZE);
-            rc.writeSharedArray(ENEMY_ARCHON_INDEX + ENEMY_ARCHON_SIZE, (endQueue+1)%INF_COMM);
-            rc.writeSharedArray(ENEMY_ARCHON_INDEX + (endQueue%ENEMY_ARCHON_SIZE), Target.getCode(loc, Target.ARCHON_TYPE));
-            rc.writeSharedArray(LEAD_INDEX + 2*(endQueue%LEAD_QUEUE_SIZE) + 1, id);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -344,6 +295,42 @@ public class Communication {
         } catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    int getNewCentralArchon(){
+        int w = rc.getMapWidth()/2;
+        int h = rc.getMapHeight()/2;
+        MapLocation center = new MapLocation(w,h);
+        int bestIndex = -1;
+        int bestDist = 0;
+        try {
+            int i = rc.readSharedArray(ARCHON_NB_INDEX);
+            while (i-- > 0) {
+                if (!archonAlive(i)) continue;
+                MapLocation newLoc = Util.getLocation(rc.readSharedArray(3 * i + 1));
+                int d = center.distanceSquaredTo(newLoc);
+                if (bestIndex < 0 || bestDist > d) {
+                    bestDist = d;
+                    bestIndex = i;
+                }
+            }
+            if (bestIndex >= 0) rc.writeSharedArray(CENTRAL_ARCHON_INDEX, bestIndex+1);
+            return bestIndex;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return myArchonIndex;
+    }
+
+    MapLocation getCentralArchon(){
+        try {
+            int i = rc.readSharedArray(CENTRAL_ARCHON_INDEX) - 1;
+            if (i < 0 || !archonAlive(i)) i = getNewCentralArchon();
+            return Util.getLocation(rc.readSharedArray(3*i+1));
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

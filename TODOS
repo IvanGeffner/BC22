@@ -1,7 +1,6 @@
-- Miners should mine at least effort (Incentivize Spread)
-- Improve exploration
-- Suicide miners
-
-For the future:
-- Recall turrets
-- Adapt Building Queue
+- Worker issue at Eckleburg
+- Healing overflow
+- Maybe set units to attack after certain round?
+- Spawn micro
+- Include archons in micro
+- Flee when low HP, go heal at half HP.

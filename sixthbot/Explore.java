@@ -15,6 +15,8 @@ public class Explore {
     MapLocation closestEnemyArchon = null;
     int distEnemyArchon = 0;
 
+    MapLocation[] randomChecks = new MapLocation[9];
+
 
     static int BYTECODE_EXPLORE_LEAD;
 
@@ -35,6 +37,11 @@ public class Explore {
                 BYTECODE_EXPLORE_LEAD = 3000;
                 break;
         }
+        generateChecks();
+    }
+
+    void generateChecks(){
+
     }
 
     void reportLead(){

@@ -29,7 +29,7 @@ public abstract class Robot {
 
         //BFS
         if (rc.getType().isBuilding()){
-            //TODO
+            bfs = new BFSArchon(rc);
         } else{
             bfs = new BFSDroid(rc);
         }
@@ -66,26 +66,51 @@ public abstract class Robot {
     boolean constructRobotGreedy(RobotType t, MapLocation target){
         try {
             MapLocation myLoc = rc.getLocation();
-            Direction bestDir = null;
-            int leastEstimation = 0;
+            BuildRobotLoc bestBRL = null;
             for (Direction d : directions) {
-                if (!rc.canBuildRobot(t,d)) continue;
-                int e;
-                if (target != null) e = myLoc.add(d).distanceSquaredTo(target);
-                else e = rc.senseRubble(myLoc.add(d));
-                if (bestDir == null || e < leastEstimation){
-                    leastEstimation = e;
-                    bestDir = d;
-                }
+                BuildRobotLoc brl = new BuildRobotLoc(t, d, target);
+                if (brl.isBetterThan(bestBRL)) bestBRL = brl;
             }
-            if (bestDir != null){
-                if (rc.canBuildRobot(t, bestDir)) rc.buildRobot(t, bestDir);
+            if (bestBRL != null){
+                if (rc.canBuildRobot(t, bestBRL.dir)) rc.buildRobot(t, bestBRL.dir);
                 return true;
             }
         } catch (Exception e){
             e.printStackTrace();
         }
         return false;
+    }
+
+    class BuildRobotLoc {
+
+        MapLocation loc;
+        Direction dir;
+        int rubble;
+        int distToTarget;
+        boolean canBuild;
+
+        BuildRobotLoc(RobotType r, Direction dir, MapLocation target){
+            this.canBuild = rc.canBuildRobot(r, dir);
+            try {
+                if (canBuild) {
+                    this.loc = rc.getLocation().add(dir);
+                    this.dir = dir;
+                    this.rubble = rc.senseRubble(loc);
+                    if (target != null) distToTarget = loc.distanceSquaredTo(target);
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        boolean isBetterThan(BuildRobotLoc brl){
+            if (!canBuild) return false;
+            if (brl == null || !brl.canBuild) return true;
+            if (rubble < brl.rubble) return true;
+            if (rubble > brl.rubble) return false;
+            return distToTarget < brl.distToTarget;
+        }
+
     }
 
     void moveRandom(){
